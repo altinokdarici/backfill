@@ -149,8 +149,10 @@ See `getEnvConfig()` in
 ### Microsoft Azure Blob Storage
 
 To cache to a Microsoft Azure Blob Storage you need to provide a connection
-string and the container name. If you are configuring via `backfill.config.js`,
-you can use the following syntax:
+string, the container name. Optionally, you can set `useDefaultCredentials` to
+utilize [DefaultAzureCredential](https://www.npmjs.com/package/@azure/identity).
+If you are configuring via `backfill.config.js`, you can use the following
+syntax:
 
 ```js
 module.exports = {
@@ -159,7 +161,7 @@ module.exports = {
     options: {
       connectionString: "...",
       container: "..."
-      maxSize: 12345
+      maxSize: 12345,
     }
   }
 };
@@ -177,6 +179,11 @@ module.exports = {
   <dt>maxSize (<em>optional</em>)</dt>
   <dd>
     max size of a single package cache, in the number of bytes
+  </dd>
+
+  <dt>useDefaultCredentials (<em>optional</em>)</dt>
+  <dd>
+    use DefaultAzureCredential to authenticate with Azure Blob Storage. You need to pass connection string as https://yourAccountName.blob.core.windows.net if you use this flag..
   </dd>
 </dl>
 
