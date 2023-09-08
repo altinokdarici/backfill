@@ -9,6 +9,7 @@ export type AzureBlobCacheStorageOptions = {
   connectionString: string;
   container: string;
   maxSize?: number;
+  useDefaultCredentials?: boolean;
 };
 
 export type NpmCacheStorageOptions = {

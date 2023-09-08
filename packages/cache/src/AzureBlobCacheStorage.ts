@@ -68,15 +68,33 @@ const uploadOptions = {
   maxBuffers: 5,
 };
 
+async function createBlobServiceClient(
+  connectionString: string,
+  useDefaultCredentials?: boolean
+) {
+  const { BlobServiceClient } = await import("@azure/storage-blob");
+
+  if (useDefaultCredentials) {
+    const { DefaultAzureCredential } = await import("@azure/identity");
+    const defaultAzureCredential = new DefaultAzureCredential();
+
+    return new BlobServiceClient(connectionString, defaultAzureCredential);
+  }
+
+  return BlobServiceClient.fromConnectionString(connectionString);
+}
+
 async function createBlobClient(
   connectionString: string,
   containerName: string,
-  blobName: string
+  blobName: string,
+  useDefaultCredentials?: boolean
 ) {
-  // This is delay loaded because it's very slow to parse
-  const { BlobServiceClient } = await import("@azure/storage-blob");
-  const blobServiceClient =
-    BlobServiceClient.fromConnectionString(connectionString);
+  const blobServiceClient = await createBlobServiceClient(
+    connectionString,
+    useDefaultCredentials
+  );
+
   const containerClient = blobServiceClient.getContainerClient(containerName);
   const blobClient = containerClient.getBlobClient(blobName);
 
@@ -164,7 +182,8 @@ export class AzureBlobCacheStorage extends CacheStorage {
     const blobClient = await createBlobClient(
       this.options.connectionString,
       this.options.container,
-      hash
+      hash,
+      this.options.useDefaultCredentials
     );
 
     const blockBlobClient = blobClient.getBlockBlobClient();
